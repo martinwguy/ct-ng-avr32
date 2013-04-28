@@ -1,3 +1,13 @@
+This patch adds patches to crosstool-ng to add a patch to newlib-1.1[78].0
+that fixes a memory-corruption bug in malloc when sbrk() can return
+discontiguous memory regions. This is a back-port of the only change
+made between dlmalloc 2.6.4 and dlmalloc 2.6.5.
+See diff of ftp://g.oswego.edu/pub/misc/ files malloc-2.6.4.c and malloc-2.6.5.c
+
+It applies to all versions of newlib previous to 1.19.0
+
+Signed-off-by: Martin Guy <martinwguy@gmail.com>
+
 --- newlib-1.17.0.orig/newlib/libc/stdlib/mallocr.c	2006-12-18 21:21:48.000000000 +0100
 +++ newlib-1.17.0/newlib/libc/stdlib/mallocr.c	2012-01-13 03:39:10.571225907 +0100
 @@ -8,12 +8,17 @@
