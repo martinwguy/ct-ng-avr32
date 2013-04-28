@@ -1,0 +1,33 @@
+Tune size optimization with -Os for AVR32
+
+The inlining heuristic for small functions is tuned to execution speed.
+This patch improves the performance of -Os by tuning --param inline-call-cost
+to the optimal value for code size instead of speed if -Os was specified and
+the parameter has not been set by the user.
+Unfortunately, in gcc-4.2, there is no way to see if the user set this
+parameter explicitly in the command line so we just see if it still has
+its default of 16. See gcc/params.def +/PARAM_INLINE_CALL_COST
+
+--- a/gcc/config/avr32/avr32.c	2013-04-25 18:32:14.000000000 +0200
++++ b/gcc/config/avr32/avr32.c	2013-04-26 11:06:34.000000000 +0200
+@@ -48,6 +48,7 @@
+ #include "integrate.h"
+ #include "tm_p.h"
+ #include "langhooks.h"
++#include "params.h"
+ 
+ #include "target.h"
+ #include "target-def.h"
+@@ -316,6 +317,12 @@
+   if (optimize >= 2 && TARGET_BRANCH_PRED)
+     align_loops = 2;
+ 
++  /* Tune size optimization for AVR32 */
++  if (optimize_size)
++  {
++    if (PARAM_VALUE (PARAM_INLINE_CALL_COST) == 16)  /* Default value */
++      set_param_value ("inline-call-cost", 8);
++  }
+ 
+   /* Enable fast-float library if unsafe math optimizations
+      are used. */

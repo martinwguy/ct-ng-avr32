@@ -1,0 +1,33 @@
+Fix mis-optimization of inlining of small functions with -Os
+
+gcc-4.3 to 4.5 make the code bigger when inlining small functions due to the
+heuristic for inlining being too approximate or wrong.
+See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=30908
+The usual fix is to add -fno-inline-small-functions but an alternative,
+--param inline-call-cost=0, generates smaller code so
+if -Os was given and inline-call-cost hasn't been explicitly set,
+we set it to 0.
+
+--- a/gcc/config/avr32/avr32.c	2013-04-25 18:32:14.000000000 +0200
++++ b/gcc/config/avr32/avr32.c	2013-04-26 11:06:34.000000000 +0200
+@@ -47,6 +47,7 @@
+ #include "langhooks.h"
+ #include "hooks.h"
+ #include "df.h"
++#include "params.h"
+ 
+ #include "target.h"
+ #include "target-def.h"
+@@ -316,6 +317,12 @@
+   if (optimize >= 2 && TARGET_BRANCH_PRED)
+     align_loops = 2;
+ 
++  /* Workaround for size optimization bug in gcc >=4.3 */
++  if (optimize_size)
++  {
++    if (!PARAM_SET_P (PARAM_MAX_INLINE_INSNS_AUTO))
++      set_param_value ("max-inline-insns-auto", 2);
++  }
+ 
+   /* Enable fast-float library if unsafe math optimizations
+      are used. */
