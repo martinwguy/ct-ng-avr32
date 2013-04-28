@@ -1,0 +1,54 @@
+--- a/gcc/config/avr32/avr32.c	2010-10-13 13:21:15.000000000 -0500
++++ b/gcc/config/avr32/avr32.c	2010-10-13 12:35:32.000000000 -0500
+@@ -146,6 +146,7 @@ static const struct part_type_s avr32_pa
+   {"uc3l032",      PART_TYPE_AVR32_UC3L032,      ARCH_TYPE_AVR32_UCR3,      "__AVR32_UC3L032__"},
+   {"uc3l016",      PART_TYPE_AVR32_UC3L016,      ARCH_TYPE_AVR32_UCR3,      "__AVR32_UC3L016__"},
+   {"uc3l064revb",  PART_TYPE_AVR32_UC3L064,      ARCH_TYPE_AVR32_UCR3,      "__AVR32_UC3L064REVB__"},
++  {"mxt768e",      PART_TYPE_AVR32_MXT768E,      ARCH_TYPE_AVR32_UCR3,      "__AVR32_MXT768E__"},
+   {NULL, 0, 0, NULL}
+ };
+ 
+--- a/gcc/config/avr32/avr32.h	2010-10-13 13:20:11.000000000 -0500
++++ b/gcc/config/avr32/avr32.h	2010-10-14 14:20:39.000000000 -0500
+@@ -185,7 +185,8 @@ enum part_type
+   PART_TYPE_AVR32_UC3L0256,
+   PART_TYPE_AVR32_UC3L064,
+   PART_TYPE_AVR32_UC3L032,
+-  PART_TYPE_AVR32_UC3L016
++  PART_TYPE_AVR32_UC3L016,
++  PART_TYPE_AVR32_MXT768E
+ };
+ 
+ /* Microarchitectures. */
+--- a/gcc/config/avr32/t-avr32	2010-10-13 13:19:54.000000000 -0500
++++ b/gcc/config/avr32/t-avr32	2010-10-13 12:36:18.000000000 -0500
+@@ -76,6 +76,7 @@ MULTILIB_MATCHES     += march?ucr3=mpart
+ MULTILIB_MATCHES     += march?ucr3=mpart?uc3l032
+ MULTILIB_MATCHES     += march?ucr3=mpart?uc3l016
+ MULTILIB_MATCHES     += march?ucr3=mpart?uc3l064revb
++MULTILIB_MATCHES     += march?ucr3=mpart?mxt768e
+ 
+ 
+ EXTRA_MULTILIB_PARTS = crtbegin.o crtbeginS.o crtend.o crtendS.o crti.o crtn.o
+--- a/gcc/config/avr32/t-avr32-linux	2010-10-13 13:19:54.000000000 -0500
++++ b/gcc/config/avr32/t-avr32-linux	2010-10-13 12:38:20.000000000 -0500
+@@ -76,6 +76,7 @@ MULTILIB_MATCHES     += march?ucr3=mpart
+ MULTILIB_MATCHES     += march?ucr3=mpart?uc3l032
+ MULTILIB_MATCHES     += march?ucr3=mpart?uc3l016
+ MULTILIB_MATCHES     += march?ucr3=mpart?uc3l064revb
++MULTILIB_MATCHES     += march?ucr3=mpart?mxt768e
+ 
+ 
+ EXTRA_MULTILIB_PARTS = crtbegin.o crtbeginS.o crtend.o crtendS.o
+--- a/gcc/doc/invoke.texi	2010-10-13 13:19:54.000000000 -0500
++++ b/gcc/doc/invoke.texi	2010-10-13 12:38:48.000000000 -0500
+@@ -8914,7 +8914,8 @@ Generate code for the specified part. Pe
+ @samp{uc3l064},
+ @samp{uc3l032},
+ @samp{uc3l016},
+-@samp{uc3l064revb}.
++@samp{uc3l064revb},
++@samp{mxt768e}.
+ 
+ @item -mcpu=@var{cpu-type}
+ @opindex mcpu

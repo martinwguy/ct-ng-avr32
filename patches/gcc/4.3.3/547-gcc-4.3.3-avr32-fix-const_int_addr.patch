@@ -1,0 +1,11 @@
+--- a/gcc/config/avr32/avr32.c	2010-06-23 10:57:02.000000000 -0500
++++ b/gcc/config/avr32/avr32.c	2010-06-24 13:54:44.000000000 -0500
+@@ -4291,7 +4291,7 @@ avr32_legitimate_address (enum machine_m
+     case REG:
+       return avr32_address_register_rtx_p (x, strict);
+     case CONST_INT:
+-      return ((mode==SImode) 
++      return ((mode==SImode) && TARGET_RMW_ADDRESSABLE_DATA
+               && CONST_OK_FOR_CONSTRAINT_P(INTVAL(x), 'K', "Ks17"));
+     case CONST:
+       {
