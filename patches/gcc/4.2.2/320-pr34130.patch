@@ -1,0 +1,35 @@
+http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34130
+
+[4.1/4.2 Regression] the builtin abs() gives wrong result when used in some expression
+
+Pengcheng Zou 2007-11-17 01:21:21 UTC:
+
+tried the following code on both gcc 4.1 and gcc  3.2,:
+----------------------------------------------------
+        int result, i;
+
+        i = 0;
+        result = -2*abs(i-2);
+        printf("result = %d\n", result);
+----------------------------------------------------
+
+the result is 4, while the correct result should be '-4;'. 
+
+if use '-fno-builtin' flag to use the glibc's abs() implementation, then the result is correct (-4). also, if the expression is changed something like '0-2*abs(i-2)', then the result is also correct.
+
+Index: gcc-4.2.2/gcc/fold-const.c
+===================================================================
+--- gcc-4.2.2.orig/gcc/fold-const.c	2007-11-21 18:53:42.000000000 +0100
++++ gcc-4.2.2/gcc/fold-const.c	2007-11-21 18:56:26.000000000 +0100
+@@ -5339,7 +5339,10 @@
+             }
+           break;
+         }
+-      /* FALLTHROUGH */
++   /* If the constant is negative, we cannot simplify this.  */
++   if (tree_int_cst_sgn (c) == -1)
++     break;
++   /* FALLTHROUGH */
+     case NEGATE_EXPR:
+       if ((t1 = extract_muldiv (op0, c, code, wide_type, strict_overflow_p))
+ 	return fold_build1 (tcode, ctype, fold_convert (ctype, t1));
